@@ -27,6 +27,10 @@
 
 ---
 
+## Preface
+
+---
+
 ## 1. Code should be easy to understand
 
 * goal: "help you make your code better"
