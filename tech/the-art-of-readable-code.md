@@ -4,7 +4,7 @@
 
 ## Table of Contents
 
-* **Preface**
+* **[Preface](#preface)**
   * [1: Code should be easy to understand](#1-code-should-be-easy-to-understand)
 * **Part One: Surface-Level Improvement**
   * 2: Packing information into names
@@ -28,10 +28,6 @@
 ---
 
 ## Preface
-
----
-
-## 1. Code should be easy to understand
 
 * goal: "help you make your code better"
 
@@ -58,6 +54,10 @@
   * unless reproducing a significant portion of the code
 * appreciate to use:
   * `The Art of Readable Code by Dustin Boswell and Trevor Foucher. Copyright 2012 Dustin Boswell and Trevor Foucher, 978-0-596-80229-5`
+
+---
+
+## 1. Code should be easy to understand
 
 ---
 
