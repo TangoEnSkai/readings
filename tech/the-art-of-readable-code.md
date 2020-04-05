@@ -16,7 +16,7 @@
   * 7: Making control flow easy to read
   * 8: Breaking down giant expressions
   * 9: Variables and readability
-* **Part Three: Reorganising Your Code**
+* **Part Three: Reorganizing Your Code**
   * 10: Extracting unrelated sub-problems
   * 11: One task at a time
   * 12: Turning thoughts into code
@@ -26,5 +26,3 @@
   * 15: Designing and implementing a "minute/hour counter"
 
 ---
-
-
