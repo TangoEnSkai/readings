@@ -60,3 +60,19 @@
   * `The Art of Readable Code by Dustin Boswell and Trevor Foucher. Copyright 2012 Dustin Boswell and Trevor Foucher, 978-0-596-80229-5`
 
 ---
+
+## Part One: Surface-Level Improvement
+
+---
+
+## Part Two: Simplifying Loops and Logic
+
+---
+
+## Part Three: Reorganizing Your Code
+
+---
+
+## Part Four: Selected Topics
+
+---
