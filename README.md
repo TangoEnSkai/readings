@@ -23,4 +23,4 @@ Citation is following [ACM Style](https://www.acm.org/publications/authors/refer
   * Dustin Boswell and Trevor Foucher, 2012, _The Are of Readable Code: Simple and Practical Techniques for Writing Better Code_ O'Reilly, Sebastopol, CA
 
 * Life
-  * Matthew Walker, 2017. _Why We Sleep_. Penguin Books, London, UK
+  * Matthew Walker, 2017. _Why We Sleep: The New Science of Sleep and Dreams_. Penguin Books, London, UK
