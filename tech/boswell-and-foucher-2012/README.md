@@ -20,10 +20,10 @@
   * 10: Extracting unrelated sub-problems
   * 11: One task at a time
   * 12: Turning thoughts into code
-  * [13: Writing less code](#13-writing-less-code)
+  * 13: Writing less code
 * **Part Four: Selected Topics**
   * 14: Testing and Readability
-  * 15: Designing and implementing a "minute/hour counter"
+  * 15: Designing and implementing a "minute/hour counter
 
 ---
 
@@ -175,25 +175,5 @@ hash == (hash << 6) + (hash << 16) - hash + c;
   * it just takes more time
 
 but, if we encourage ourselves to have "easy to read" programming convention, we can program better codes.
-
----
-
-## Part One: Surface-Level Improvement
-
----
-
-## Part Two: Simplifying Loops and Logic
-
----
-
-## Part Three: Reorganizing Your Code
-
----
-
-## 13. Writing Less Code
-
----
-
-## Part Four: Selected Topics
 
 ---
