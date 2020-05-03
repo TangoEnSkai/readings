@@ -1,8 +1,8 @@
-# readings
+# learning notes
 
 ---
 
-This repo is made for self-study purpose by perusing books.  
+This repo is made for self-study purpose by perusing books, articles, etc. It also includes several notes from personal learning from the Internet.  
 
 Main objective of this project is:
 
