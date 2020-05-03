@@ -1,4 +1,4 @@
-# Boswell and Foucher 2012, Why we Sleep: The New Science of Sleeping and Dreams
+# Boswell and Foucher 2012, The Art of Readable Code: Simple and Practical Techniques for Writing Better Code
 
 ---
 
