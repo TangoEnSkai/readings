@@ -111,7 +111,7 @@ class Thread {
 #### 2.1.1. Finding More "Colourful" Words
 
 | Word | Alternatives |
-| :---: | :---: |
+| --- | --- |
 | send | deliver, dispatch, distribute, route |
 | find | search, extract, locate, recover |
 | start | launch, create, begin, open |
@@ -304,13 +304,412 @@ ADVICE: **If you're going to use a generic name like `tmp`, or `retval`, have a 
 
 ### 2.3. Prefer Concrete Names over Abstract Names
 
+* naming for: variables, functions, elements, etc.
+  * describe it concretely rather than abstractly
+
+* e.g. an internal method `ServerCanStart()`
+  * with test whether the server can listen on a given TCP/IP port
+    * the name, `ServerCanStart()` is somewhat abstract
+    * more concrete name:
+      * `CanListenOnPort()`
+        * which directly describe what it does
+
+more details about this concept will be explain in the following subchapters.
+
+#### 2.3.1. Example: `DISALLOW_EVIL_CONSTRUCTORS`
+
+* an example from the codebase at Google
+  * in C++
+    * if you don't define a copy constructor
+    * or assignment operator for your class
+  * a default is provided.
+
+even if this can be handy, can easily have some problems:
+
+* memory leaks
+* other mishaps
+
+because they are executed with "behind the scenes" in place you might not have realised.
+
+Thus, Google as a **convention** to disallow these "evil" constructors by employing a macro:
+
+```cpp
+class ClassName {
+  private:
+    DISALLOW_EVIL_CONSTRUCTORS(ClassName);
+
+    public:
+    ...
+};
+```
+
+this macro was defined as:
+
+```cpp
+#define DISALLOW_EVIL_CONSTRUCTORS(ClassName) \
+  ClassName(const ClassName&); \
+  void operator=(const ClassName&);
+```
+
+* by placing it into `private:` section in the class
+  * these two methods become private
+  * so, they cannot be (accidentally) used
+
+The name `DISALLOW_EVIL_CONSTRUCTORS` could not very good, though.
+
+* the world `evil`
+  * strong stance on a debatable issue
+  * isn't clear what the macro disallowing
+    * it disallows the `operator=()` method, and that's isn't even a "constructor"
+
+It's been used for many years, but replaced with less provocative and more concrete:
+
+```cpp
+#define DISALLOW_COPY_AND_ASSIGN(ClassName)
+```
+
+#### 2.3.2. Example: `--run_locally`
+
+* an optional command-line flag named: `--run_locally`
+  * to print extra debugging info but run slowly
+
+the flag "was" typically used when testing on a local machine, but when it runs on the _remote server_, performance is integral, thus this flag was not used.
+
+here are some issues:
+
+* a new member of the team did not know what it did, he/she would use it when running locally, but did knot know "why" it was needed
+* sometimes, we need to print debugging info when we run the code at remote server, but passing `--run_locally` to the remote server sounds a paradox, also very confusing. (running locally, remotely?)
+* sometimes, we need to run a performance test locally and did not want to the logging slowing it down, ergo, we would not use `--run_locally`
+
+SOLUTION: `--extra_logging`, _more direct and explicit_
+
+However, what if `--run_locally` needs to do more than just "extra logging"?
+
+* an example:
+  * imagine it needs to set up and use a special local database
+  * the name `--run_locally` seems better than `--exra_logging`
+    * since `--run_locally` can control both (setting up, use special local DB) at once
+  * BUT
+    * still, using `--run_locally` for that new purpose is not ideal.
+    * **it's vague and indirect**
+      * better to create a NEW FLAG:
+        * `--use_local_database`
+      * even if the number of flags increased
+        * it's more explicit
+        * _do NOT try to smash two orthogonal ideas into one_
+        * also it gives you to have several options like: use one flag but not the other flag
+
 ### 2.4. Attaching Extra Information to a Name
+
+* consider variable names like a tiny comment
+* there are something very important about a variable,
+  * you think the reader must know,
+  * it's better to attaching an extra "word" to the name
+
+* e.g. a variable that contained a hexadecimal string:
+
+```cpp
+string id; // Example: "af84ef89fkez"
+```
+
+you may want to name as `hex_id` instead, if it's important for the reader(s) to remember the format of the ID.
+
+#### 2.4.1. Values with Units
+
+* if a variable is measurement (e.g. amount of time, number of bytes)
+  * it's helpful to encode the units into the variable's name
+
+* for example, JavaScript code that measures the load time of a web page:
+
+```js
+var start = (new Date()).getTime();           // top of the page
+...
+var elapsed = (new Date()).getTime() - start; // bottom of the page
+document.writeln("LOad time was:" + elapsed + " seconds");
+```
+
+it's totally okay code, but it does not work since `getTime()` returns **milliseconds**, not _seconds_
+
+by using `_ms` as postfix makes it more explicit:
+
+```js
+var start_ms = (new Date()).getTime();                // top of the page
+...
+var elapsed_ms = (new Date()).getTime() - start_ms;   // bottom of the page
+document.writeln("LOad time was:" + elapsed_ms / 1000 + " seconds");
+```
+
+besides times, many units we are using for programming:
+
+| Function Parameter | Renaming Parameter to Encode Units |
+| --- | --- |
+| `Start(int delay)` | `delay` -> `delay_secs` |
+| `CreateCache(int size)` | `size` -> `size_mb` |
+| `ThrottleDownload(float limit`) | `limit` -> `max_kbps` |
+| `Rotate(float angle)` | `angle` -> `degrees_cw` |
+
+#### 2.4.2. Encoding Other Important Attributes
+
+* technique of attaching extra info. to a name is NOT limited only values with units
+* should use this techniques anytime for something can be dangerous/surprising about the variables
+
+* for example, many security exploits come from not realising that some of the data which your program receives is not yet in a safe status, you may want to use name like:
+  * `untrustedUrl` or `untrustedURL`
+  * `unsafeMessageBody`
+* after calling functions that cleanse the "unsafe" inputs
+  * results might be trusted:
+    * `trustedUrl` or `trustedURL`
+    * `safeMessageBody`
+
+other examples:
+
+| Situation | Variable Name | Better Name |
+| --- | --- | --- |
+| A password is in "plaintext" and should be encrypted before further processing | `password` | `plaintext_password` |
+| A user-provided comment that needs escaping before being displayed | `comment` | `unescaped_comment` |
+| Bytes of html have been converted to UTF-8 | `html` | `html_utf8` |
+| Incoming data has been "url encoded" | `data` | `data_urlenc` |
+
+* be aware that you should NOT use `unescaped_` or `_utf8` for all names
+  * it's used for very important place and also need to help future debugging
+  * also to avoid someone's mistake
+  * some places that has huge security bug concern
+    * very critical things, variables, put additional info on the name
+
+---
+
+* **IS THIS HUNGARIAN NOTATION?**
+  * the notation is a system of naming widely used by Microsoft
+    * it encodes the "type" of every variable into name's prefix
+
+| Name | Meaning |
+| --- | --- |
+| `pLast` | A pointer (p) to the last element in some data structure |
+| `pszBuffer` | A pointer (p) to a zero-terminated (z) string (s) buffer |
+| `cch` | A count (c) of characters (ch) |
+| `mpcopx` | A map (m) from a pointer to a colour (pco) to a pointer to an x-axis length (px) |
+
+* It is an example of "attaching attributes to names"
+  * but, it's a more formal and strict system
+    * focused on encoding a specific set of attributes
+
+what we have talked in this section is a broader, more informal system by following this practice:
+
+* identifying any crucial attributes of a variable
+* encode them legibly
+
+---
 
 ### 2.5. How Long Should a Name Be?
 
+> When picking a good name, there's an implicit constraint that the name shouldn't be too long.
+
+for example, no one likes to see this:
+
+```java
+newNavigationControllerWrappingViewControllerForDataSourceOfClass
+```
+
+* longer name, harder to remember
+* more space consume on the screen, causing extra lines to wrap
+
+if we avoid this too much, then
+
+* using only single-word (or single letter)
+  * may not be good depending on languages
+    * although it's quite commonly used in Golang Community!
+
+anyways, how's handle the tradeoffs?
+
+* `d`
+* `days`
+* `days_since_last_update` or `daysSinceLastUpdate`
+
+#### 2.5.1. Shorter Names Are Okay for Shorter Scope
+
+* for a short vacation, we pack less luggage than long vacation's one
+  * identifier for small "scope"
+    * how many LOC(lines of code) you see with the name
+  * we don't need to carry much info. (on the name)
+
+you should use shorter names when all info., such as:
+
+* what type the variable is
+* its initial value
+* how it's destroyed
+
+is easy to see, like example below:
+
+```cpp
+if (debug) {
+  map<string, int> m;
+  LookUpNamesNumbers(&m);
+  Print(m);
+}
+```
+
+even if `m` does not pack any info., it's not an issue, since the reader already get enough information to understand the code.
+
+However, let's think what if `m` were a:
+
+* _class member_
+* or _global variable_
+
+```cpp
+  LookUpNamesNumbers(&m);
+  Print(m);
+```
+
+since the "scope" becomes larger, it's less readable. Therefore, if an identifier has a large scope, the name needs to carry enough info. to make it clear.
+
+#### 2.5.2. Typing Long Names - Not a Problem Anymore
+
+> they are harder to type
+
+is not a good reason to avoid longer names, although there are still a lot of valid reasons why longer names are not good.
+
+Now, **WORD COMPLETION** is very common, and actually quite a lot of people are not aware of it.
+
+You can simply write a bit longer name with:
+
+1. type the first few characters of the name
+2. trigger the word-completion command
+3. if the completed word is not correct, keep triggering the command unitl the correct name appears
+
+| Editor | Command |
+| --- | --- |
+| Vi | Ctrl-p |
+| Emacs | Meta-/ (hit ESC, then /) |
+| Eclipse | Alt-/ |
+| Intellij IDEA | Alt-/ |
+| TestMate | ESC |
+
+#### 2.5.3. Acronyms and Abbreviations
+
+* we sometimes use acronyms and abbreviations to make name small
+* e.g. naming a class `BEManager` rather than `BackEndManager`
+
+> Is this shrinkage worth the potential confusion?
+
+* **Project-specific abbrevations are usually a bad idea.**
+  * they appear cryptic and intimidating for new people for the project
+
+Think about: **would a new teammate understand what the name means?**. if yes, then it would be okay.
+
+For instance, it's fair enough to use for programmers:
+
+* `eval` than `evaluation`
+* `doc` than `documentation`
+* `str` than `string`
+
+Thus, when the new member see `FormatStr()`, they probably easily catch its meaning, however what about `BEManager()`?
+
+#### 2.5.4. Throwing Out Unneeded Words
+
+* sometimes, we can throw some words from names without losing any info.
+
+| Before | After |
+| --- | --- |
+| `ConvertToString()` | `ToString()` |
+| `DoServeLoop()` | `ServeLoop()` |
+
 ### 2.6. Use Name Formatting to Convey Meaning
 
+* use of:
+  * underscores
+  * dashes
+  * capitalisation
+* can also pack more info. in a name
+
+For example, C++ Style Convention used for Google for open source projects:
+
+```cpp
+static const int kMaxOpenFiles = 100;
+
+class LogReader {
+  public:
+    void OpenFile(string local_file);
+
+  private:
+    int offset_;
+    DISALLOW_COPY_AND_ASSIGN(LogReader);
+};
+```
+
+* having different formats for different entities is like a form of syntax highlighting
+  * help you to read code more easily
+
+* They are pretty common and known as:
+  * CamelCase (strictly speaking, this can be PascalCase, camelCaseLooksLikeThis)
+    * for class names
+  * snake_case (lower_separated)
+    * for variable names
+
+but, there are also some other conventions that maybe surprising:
+
+* constant value
+  * `kConstantName` than `CONST_NAME`
+    * this can be benefit because we can easily differentiate const value with `#define` "macros" (e.g. `MACRO_NAME` by the convention)
+* class member variables
+  * `offset_`
+    * it looks weird, but being able to instantly distinguish members from other variables is handy
+    * for example, when we are looking very large class and encounter this line of code:
+      * `stats.Clear()`
+      * we may wonder:
+        * does `stats` belong to this class so that it changes internal state of this class?
+        * with `member_` convention, we don't need to worry about it and we can simply answer as:
+          * no (because it's not `stats_`, but `stats`)
+      * in Go, we can use PascalCase for non-local variables whereas we can still use camelCase for local variables)
+
+#### 2.6.1. Other Formatting Conventions
+
+* depending on your project/language
+  * there might be different style guides that you can use to make names contain more information
+
+* e.g. in, `JavaScript: The Good Parts (Douglas Crockford, O'Reilly, 2008)`, the author suggest:
+  * "constructors" (functions intended to be called with `new`) should be capitalised
+    * other ordinary functions should start with a lowercase letter
+
+```js
+var x = new DatePicker(); // DatePicker() is a "constructor" function
+var y = pageHeight();     // PageHeight() is an ordinary function
+```
+
+another JS example: when calling the jQuery library function (name is the single character `$`, a useful convention is to prefix jQuery results with `$` as well:
+
+```js
+var $all_images = $("img"); // $all_images is a jQuery object
+var height = 250;           // height is not
+```
+
+final example: HTML/CSS, when giving an HTML/CSS tag an `id` or `class` attribute, both underscores and dashes are valid characters to use in the value
+
+* possible convention:
+  * use underscores to separate words in IDs
+  * use dashes to separate words in classes
+
+```html
+<div id="middle_column" class="main-content"> ...
+```
+
+* what sort of conventions we use?
+  * up to you or your team
+  * whatever style guide you use
+    * **be CONSISTENT** across your project(s)
+
 ### 2.7. Summary
+
+* Theme: **pack information into your names**
+  * readers can extract a lot of info. just by reading the names
+
+| Tip | Example |
+| --- | --- |
+| **Use specific words** | instead of `Get`, words like `Fetch` or `Download` might be better, depending on context |
+| **Avoid generic names** | like `tmp` and `retval`, unless there's a specific reason to use them |
+| **Use concrete names** | that describe things in more detail, the name `ServerCanStart()` is vague compared to `CanListenOnPort()`|
+| **Attach important details** | to variable names. appending `_ms` to a variable whose value is in milliseconds or prepend `raw_` to an unprocessed variable that needs escaping |
+| **Use longer names for larger scopes** | don't use cryptic one or two letter names for variables that span multiple screens; shorter names are better for variables that span only a few lines |
+| **Use capitalisation, underscores, and so on in a meaningful way** | you can append `_` to class members to distinguish them from local variables |
 
 ---
 
