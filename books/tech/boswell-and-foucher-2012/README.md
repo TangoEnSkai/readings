@@ -61,7 +61,7 @@
 
 > Code should be easy to understand
 
-### What makes code better?
+### 1.1. What makes code better?
 
 > "better code? mostly depending on our gut feel and intuition...
 
@@ -111,7 +111,7 @@ if (exponent >= 0) {
 
 > "How we decide which one is better?"
 
-### The fundamental Theorem of Readability
+### 1.2. The fundamental Theorem of Readability
 
 > "Code should be written to minimize the time it would take for someone else to understand it
 
@@ -119,7 +119,7 @@ if (exponent >= 0) {
   * you'll never know you may join your project.
   * having that quote as a guide would work often nicely.
 
-### Is Smaller Always Better?
+### 1.3. Is Smaller Always Better?
 
 * generally speaking, yes
   * see -> [13: Writing less code](#13-writing-less-code)
@@ -154,7 +154,7 @@ example C:
 hash == (hash << 6) + (hash << 16) - hash + c;
 ```
 
-### Does Time-Til-Understanding Conflict with Other Goals?
+### 1.4. Does Time-Til-Understanding Conflict with Other Goals?
 
 * other constrains:
   * making code efficient
@@ -168,7 +168,7 @@ hash == (hash << 6) + (hash << 16) - hash + c;
   * how to apply "easy to read" to different situation
   * but basically, readability is the most important
 
-### The Hard Part
+### 1.5. The Hard Part
 
 * before we write some code
   * if we want to think about how "others" could read the code
