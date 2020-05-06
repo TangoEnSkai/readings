@@ -715,23 +715,461 @@ final example: HTML/CSS, when giving an HTML/CSS tag an `id` or `class` attribut
 
 ## 3. Names that Can't Be Misconstrued
 
+Watching out names that can be misunderstood!
+
+KEY IDEA: **Actively scrutinise your names by asking yourself, "What other meanings could someone interpret from this name?"
+
+* actively seeking "wrong interpretations"
+  * help you spot ambiguous names
+
 ### 3.1. Example: Filter()
+
+* imagine you are writing code to manipulate a set of database (DB) results
+
+```py
+results = Database.all_objects.filter("year <= 2011")
+```
+
+what's the result?
+
+* object whose year is <= 2011?
+* object whose year is NOT <= 2011?
+
+this is because...
+
+* problem: `filter` is an ambiguous word
+  * unclear for
+    * to pick out
+    * to get rid of
+  * thus, it's better not to use words like `filter`
+    * since they are easily misconstrued
+
+* better names for
+  * to pick out
+    * `select()`
+  * to get rid of
+    * `exclude()`
 
 ### 3.2. Example: Clip(text, length)
 
+imagine this:
+
+```py
+# Cuts off the end of the text, and appends "..."
+def Clip(text, length):
+  ...
+```
+
+* two ways to guess how that function works:
+  * it removes `length` from the end
+  * it truncates to a maximum `length` (most likely)
+
+you never know which one was original intent.
+
+* rather than leave your reader which any nagging doubt,
+  * it's better to name function `Truncate(text, length)`
+
+Furthermore, the name of parameter, `length`, can be also problem. `max_length` can be clearer.
+
+BUT, `max_length` is still arguable with potential multiple interpretation:
+
+* a number of
+  * bytes
+  * characters
+  * words
+
+as we discussed about "attaching unit to names" we can improve this if was meant as: "number of characters"
+
+```py
+max_char
+```
+
 ### 3.3. Prefer `min` and `max` for (Inclusive) Limits
+
+imagine your shopping cart is limited to buy less than 10 items at once:
+
+```py
+CART_TOO_BIG_LIMIT = 10
+
+if shopping_cart.num_items() >= CART_TOO_BIG_LIMIT:
+  Error("Too many items in cart.")
+```
+
+one thing: classic _off-by-one_ bug, we should replace `>=` with `>` (or maybe change the limit as `11`, not `10`):
+
+```py
+if shopping_cart.num_items() > CART_TOO_BIG_LIMIT:
+```
+
+but, regardless the bug, `CART_TOO_BIG_LIMIT` is an ambiguous name. Did you mean:
+
+* up to?
+* up to and including?
+
+ADVICE: **The clearest way to name a limit is to put `max_` or `min_` in front of the thing being limited.**
+
+thus, we can change the name as `MAX_ITEMS_IN_CART` and refactored code looks better:
+
+```py
+MAX_ITEMS_IN_CART = 10
+
+if shopping_cart.num_items() > MAX_ITEMS_IN_CART:
+  Error("Too many items in cart.")
+```
 
 ### 3.4. Prefer `first` and `last` for Inclusive Ranges
 
+```image
+first        last
+  |           |
+  v           v
+ --- --- --- --- ---
+| a | b | c | d |   |
+ --- --- --- --- ---
+```
+
+an example where you cannot tell if it's "up to" or "up to and including":
+
+```py
+print integer_range(start=2, stop=4)
+# Does this print [2,3] or [2,3,4] (or something else)?
+```
+
+even if `start` is a reasonable parameter name, `stop` can be understood in multiple ways.
+
+for _inclusive range_, where the range should include both end points, a good choice is `first/last`:
+
+```py
+set.PrintKeys(first="Bart", last="Maggie")
+```
+
+unlike `stop`, the word `last` is clearly inclusive. Also the names `min/max` also work for inclusive ranges depending on the context (if they sounds right).
+
 ### 3.5. Prefer `begin` and `end` for Inclusive/Exclusive Ranges
+
+```image
+ --- --- --- --- ---
+| a | b | c | d |   |
+ --- --- --- --- ---
+  ^               ^
+  |               |
+begin            end
+```
+
+It's often more convenient to use inclusive/exclusive ranges.
+
+* e.g. if you want to print all the events that happened on the 16th of October
+* it's easier to write:
+
+```py
+PrintEventsInRange("OCT 16 12:00am", "OCT 17 12:00am")
+```
+
+than
+
+```py
+PrintEventsInRange("OCT 16 12:00am", "OCT 16 11:59:59.9999pm")
+```
+
+* what's a good pair of those params?
+  * a typical programming convention: `begin/end`
+    * however, `end` is a bit ambiguous
+      * e.g.
+        * "I am at the end of book.", the `end` is inclusive
+        * Unfortunately, English does not have a succinct word for _"just past the last value"_
+    * since `begin/end` is so idiomatic
+      * e.g. it's used in C++'s standard libraries
+      * e.g. most of places where an array needs to be "sliced" in this way
+      * it's the best option for now
 
 ### 3.6. Naming Booleans
 
+picking a name for a boolean variables or a function that returns a boolean, make sure the `true` or `false` means clear.
+
+* a dangerous example:
+
+```c
+bool read_password = true;
+```
+
+* two ways to understand above:
+  * we need to read the password
+  * the password has already been read
+
+in this case, it's best to avoid word `read`, then name it as:
+
+* `need_password`
+* `user_is_authenticated`
+
+generally, adding words like:
+
+* `is`
+* `has`
+* `can`
+* `should`
+
+makes booleans more clear.
+
+another example with a function named as `SpaceLeft()` should like:
+
+* it might return a number
+
+if this meant to be returning a boolean value, better name:
+
+```c
+HasSpaceLeft()
+```
+
+last example, it's best to avoid _negated_ terms in a name:
+
+instead of:
+
+```c
+bool disable_ssl = false;
+```
+
+better code:
+
+```c
+bool use_ssl = true;
+```
+
+* easier to read
+* more compact to mention
+
 ### 3.7. Matching Expectations of Users
+
+some names can be misread due to user may have a preconceived idea of what the name means, even if you meant something else. with this case, it's best to just "give in" and change the name so that it's not misleading:
+
+#### 3.7.1. `get*()`
+
+* many programmers are used to the convention that methods starting with `get` are lightweight accessors
+  * which simply return an internal member
+  * going against this convention is likely to mislead those users
+    * an example of Java what NOT to do:
+
+```java
+public class StatisticsCollector {
+  public void addSample(double x)
+
+  public double getMean() {
+    // Iterate through all samples and return total / num_samples
+  }
+}
+```
+
+* in this case
+  * the implementation of `getMean()
+    * to iterate over past data
+    * and calculate the mean on the fly
+  * this step might be very expensive with a LOT of data
+    * but some unsuspecting programmers may call `getMean()` carelessly because they may assume the function is an inexpensive call
+* we can rename this:
+  * `computeMean()`
+    * this tells people it could be an expensive operation
+      * or we can refactor to make it as more lightweight operation
+
+#### 3.7.2. `list::size()`
+
+an example in C++ standard library, which was a cause of a very-difficult-to-find bug that made one of our servers slow down to a crawl:
+
+```cpp
+void ShrinkList(list<Node>& list, int max_size) {
+  while (list.size() > max_size) {
+    FreeNode(list.back());
+    list.pop_back();
+  }
+}
+```
+
+* the "bug": author did not know:
+  * `list.size()` is an _O(n) operation_
+    * therefore, this counts through the linked list node by node rather than using/returning a precalculated count
+    * this makes `ShrinkList()` call as _O(n^2) operation_
+
+let's think about this:
+
+* the code is technically "correct"
+* passed unit test
+
+However, when `ShrinkList()` was called on a list with a million elements, it took almost a lot of time... this can be an hour, hours, days or forever!
+
+You may think in this way:
+
+* this is the caller's fault
+  * they should have read the documentation more carefully
+
+this is true but, THE FACT IS:
+
+> list.size() isn't a constant-time operation is surprising
+
+instead of the name `size()` those might give us more attention about operation cost:
+
+* `countSize()`
+* `countElements()`
+
+the C++ standard library probably wanted to name the method `size()` to match all other containers like `vector` and `map`, however because if the name, programmers can be easily confused and they could consider it as a fast operator, the way it's for other containers.
+
+Fortunately, the lastest C++ standard library mandates `size()` to be _O(1) operation_.
+
+---
+
+WHO'S THE WIZARD
+
+* a while ago, one of the authors was installing OpenBSD OS
+* during the disk formatting step, a complicated menu popped up, asking for disk parameters
+  * one option: to go to "Wizard mode"
+    * he was relieved to find this user-friendly option and select it
+    * to his dismay, it dropped the installer into a low-level prompt waiting for manual disk formatting command with no clear way to get out of it
+  * the "wizard" meant
+    * you were the wizard
+    * not the mode is wizard
+
+---
 
 ### 3.8. Example: Evaluating Multiple Name Candidates
 
+* deciding a good name, you may have multiple candidates
+* better to debate which one is the best in your head before settling with the final one
+
+here is an illustration of the critiquing process:
+
+* high-traffic websites often use "experiments" to test
+  * whether a change to the website improves business
+  * an example of a config file that controls some experiments:
+
+```config
+experiment_id: 100
+description: "increase font size to 14pt"
+traffic_fraction: 5%
+...
+```
+
+* each experiment is defined by about 15 attributes/value pairs
+* unfortunately, when defining another experiment that's very similar: you need to copy and paste the previous config and change some:
+
+```config
+experiment_id: 101
+description: "increase font size to 13pt"
+[other lines identical to experiment_id 100]
+...
+```
+
+imagine we want to fix this situation by introducing a new way to have on experiment reuse the properties from other (this is the "prototype inheritance" pattern).
+
+the end result is that you would type like:
+
+```config
+experiment_id: 101
+the_other_experiment_id_I_want_to_reuse: 100
+[change any properties as needed]
+```
+
+* next question: should `the_other_experiment_id_I_want_to_reuse` really be named?
+  * better considerations:
+    * `template`
+    * `reuse`
+    * `copy`
+    * `inherit`
+  * any of those four makes sense to us since
+    * we're the one adding this new feature to the config language
+
+BUT, we may also consider this:
+* how the name will sound to someone who comes across the code and does not know about this feature?
+
+let's analyse each name
+
+Option ONE: using the name `template`
+
+```config
+experiment_id: 101
+template: 100
+...
+```
+
+* problems:
+  * unclear whether it's saying "I am a template." or "I am using this other template."
+  * "template" is often something abstract
+    * that must be "filled in" before it is _concrete_
+    * some might think a templated experiment isn't a "real" experiment
+  * thus, `template` is just too vague in this situation
+
+Option TWO: using the name `reuse`
+
+```config
+experiment_id: 101
+reuse: 100
+...
+```
+
+* okay, but
+  * as written some might consider "this experiment can be reused at most 100 times."
+  * rename it as `reuse_id` may resolve the problem above
+    * but the confused reader might think `reuse_id: 100` as
+      * "my id for reuse is 100"
+
+Option THREE: using the name `copy`
+
+```config
+experiment_id: 101
+template: 100
+...
+```
+
+* a good word, but by itself, `copy: 100` seems like it's saying "copy this experiment 100 times" or "this is the 100th copy of something"
+  * to make it clear that this term refers to _another_ experiment, we can rename it as `copy_experiment`
+    * it maybe the best name so far
+
+Option FOUR: using the name `inherit`
+
+```config
+experiment_id: 101
+template: 100
+...
+```
+
+* familiar name for most of programmers
+  * can be understood that further modifications are made after inheritance
+    * with class inheritance, you get all the methods and members of another class
+    * and then modify them or add more
+  * in the real life, when you inherit possessions from a relative,
+    * it's understood that you might sell them or own other things yourself
+* let's make it clear that we are inheriting from another experiment
+  * we can improve the name to
+    * `inherit_from`
+    * `inherit_from_experiment_id`
+
+As result, `copy_experiment` or `inherit_from_experiment_id` can be good names since they most clearly describe what's happening and least likely to be misunderstood.
+
 ### 3.9 Summary
+
+* the best names: ones that can't be misconstrued
+  * the person reading your code will understand it the way you meant it without any other way
+  * a lot of English words are ambiguous when it comes to programming
+    * `filter`
+    * `length`
+    * `limit`
+* before deciding names, play devil's advocate and imagine how your name might be misunderstood
+
+> The best names are resistant to misinterpretation.
+
+* upper/lower limit for a value
+  * `max_` and `min_` are good prefixes
+* inclusive ranges
+  * `first` and `last` are good
+* inclusive/exclusive ranges
+  * `begin` and `end` are best (as they are the most idiomatic choice)
+
+* naming booleans
+  * use words like:
+    * `is`
+    * `has`
+  * to make it clear that it's a boolean variable
+  * avoid "negated" terms
+    * `disable_ssl`
+  
+* be aware of users' expectation of certain words
+  * user may expect get() or size() to be lightweight methods
 
 ---
 
