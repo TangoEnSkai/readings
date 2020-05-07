@@ -116,7 +116,7 @@ if (exponent >= 0) {
 > "Code should be written to minimize the time it would take for someone else to understand it
 
 * even if you work alone
-  * you'll never know you may join your project.
+  * you'll never know who might join your project.
   * having that quote as a guide would work often nicely.
 
 ### 1.3. Is Smaller Always Better?

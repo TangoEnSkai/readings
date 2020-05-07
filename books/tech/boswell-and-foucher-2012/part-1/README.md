@@ -65,8 +65,8 @@ def GetPage(url):
 * the word `Get` does not say much
   * get a page from
     * a local cache
-    * from a database?
-    * from the Internet?
+    * a database?
+    * the Internet?
 
 * if it's "from the Internet"
   * more specific names:
@@ -85,7 +85,7 @@ class BinaryTree {
 * what would `Size()` return:
   * height of the tree?
   * number of nodes?
-  * memory footfrint of the tree?
+  * memory footprint of the tree?
 
 * Problem: _"`Size`, the word, does not convey much information"_
   * more specific names:
@@ -288,7 +288,7 @@ for this, using precise names would be helpful.
       if (clubs[ci].members[ui] == users[mi]) // Bug! First letters don't match up
 ```
 
-correct usage is more noticeable for right index usages:
+correct usage is more noticeable for right index usages
 
 #### 2.2.3. The Verdict on Generic Names
 
@@ -297,7 +297,7 @@ There are some case where generic names are useful.
 ADVICE: **If you're going to use a generic name like `tmp`, or `retval`, have a good reason for doing so.**
 
 * Often, they're "overused" out of pure laziness.
-* _This is understandable when nothing better comes to mind_.
+* _This is understandable when nothing better name comes to mind_.
   * maybe picking lazy name and carry on is quicker and faster to develop
 * BUT, if you get a "habit" to spend just extra FEW SECONDS to think better names
   * > You'll find your "naming muscle" builds quickly!
@@ -355,12 +355,12 @@ this macro was defined as:
   * these two methods become private
   * so, they cannot be (accidentally) used
 
-The name `DISALLOW_EVIL_CONSTRUCTORS` could not very good, though.
+The name `DISALLOW_EVIL_CONSTRUCTORS` could not be very good, though.
 
 * the world `evil`
   * strong stance on a debatable issue
   * isn't clear what the macro disallowing
-    * it disallows the `operator=()` method, and that's isn't even a "constructor"
+    * it disallows the `operator=()` method, and that's not even a "constructor"
 
 It's been used for many years, but replaced with less provocative and more concrete:
 
@@ -377,7 +377,7 @@ the flag "was" typically used when testing on a local machine, but when it runs 
 
 here are some issues:
 
-* a new member of the team did not know what it did, he/she would use it when running locally, but did knot know "why" it was needed
+* a new member of the team did not know what it did, he/she would use it when running locally, but didn't know "why" it was needed
 * sometimes, we need to print debugging info when we run the code at remote server, but passing `--run_locally` to the remote server sounds a paradox, also very confusing. (running locally, remotely?)
 * sometimes, we need to run a performance test locally and did not want to the logging slowing it down, ergo, we would not use `--run_locally`
 
@@ -425,7 +425,7 @@ you may want to name as `hex_id` instead, if it's important for the reader(s) to
 var start = (new Date()).getTime();           // top of the page
 ...
 var elapsed = (new Date()).getTime() - start; // bottom of the page
-document.writeln("LOad time was:" + elapsed + " seconds");
+document.writeln("Load time was:" + elapsed + " seconds");
 ```
 
 it's totally okay code, but it does not work since `getTime()` returns **milliseconds**, not _seconds_
@@ -591,7 +591,7 @@ You can simply write a bit longer name with:
 
 > Is this shrinkage worth the potential confusion?
 
-* **Project-specific abbrevations are usually a bad idea.**
+* **Project-specific abbreviations are usually a bad idea.**
   * they appear cryptic and intimidating for new people for the project
 
 Think about: **would a new teammate understand what the name means?**. if yes, then it would be okay.
