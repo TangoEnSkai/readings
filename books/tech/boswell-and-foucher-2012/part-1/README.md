@@ -387,7 +387,7 @@ However, what if `--run_locally` needs to do more than just "extra logging"?
 
 * an example:
   * imagine it needs to set up and use a special local database
-  * the name `--run_locally` seems better than `--exra_logging`
+  * the name `--run_locally` seems better than `--extra_logging`
     * since `--run_locally` can control both (setting up, use special local DB) at once
   * BUT
     * still, using `--run_locally` for that new purpose is not ideal.
@@ -574,7 +574,7 @@ You can simply write a bit longer name with:
 
 1. type the first few characters of the name
 2. trigger the word-completion command
-3. if the completed word is not correct, keep triggering the command unitl the correct name appears
+3. if the completed word is not correct, keep triggering the command until the correct name appears
 
 | Editor | Command |
 | --- | --- |
@@ -1075,7 +1075,8 @@ the_other_experiment_id_I_want_to_reuse: 100
     * we're the one adding this new feature to the config language
 
 BUT, we may also consider this:
-* how the name will sound to someone who comes across the code and does not know about this feature?
+
+> how the name will sound to someone who comes across the code and does not know about this feature?
 
 let's analyse each name
 
@@ -1175,9 +1176,168 @@ As result, `copy_experiment` or `inherit_from_experiment_id` can be good names s
 
 ## 4. Aesthetics
 
+* layout of a magazine
+  * the length of paragraph
+  * the with of the columns
+  * the order of the articles
+  * what goes on the cover
+
+those makes magazines better to read, same logic can be applied to make your code easier to read
+
+* Three Principles
+  * use consistent layout, with patterns the reader can get used to
+  * make similar code look similar
+  * group related line of code into blocks
+
+---
+
+AESTHETICS vs. DESIGN
+
+* this chapter only covers simile "aesthetic" improvement for your code
+  * easy to make
+  * often improve readability
+* times when larger refactoring of your code can help more
+  * e.g. splitting out new functions or classes
+* our view:
+  * good aesthetics v.s. good designs are "independent ideas"
+* ideally we should strive for both"
+
+---
+
 ### 4.1. Why Do Aesthetics Matter?
 
+imagine to use this class:
+
+```cpp
+class StatsKeeper {
+    public:
+    // A class for keeping track of a series of doubles
+       void Add(double d);  // and methods for quick statistics about them
+      private:   int count;        /* how many so    far
+    */ public:
+            double Average();
+    private:   double minimum;
+    list<double>
+      past_items
+          ;double maximum;
+};
+```
+
+this may take longer to understand than below:
+
+```cpp
+
+// A class for keeping track of a series of doubles
+// and methods for quick statistics about them.
+class StatsKeeper {
+  public:
+    void Add(double d);
+    double Average();
+  private:
+    list<double> past_items;
+    int count;  // how many so far
+
+    double minimum;
+    double maximum;
+};
+```
+
+* **easier to work with code that's aesthetically pleasing**
+  * most of time programming
+    * spend looking at code
+      * the faster you can skim through your code
+      * the easier it is for everyone to use it
+
 ### 4.2. Rearrange Line Breaks to Be Consistent and Compact
+
+* example: you are writing Java code to evaluate how your program behaves with various network connection speed
+  * `TcpConnectionSimulator` that takes four parameters in its constructor:
+    * the speed of the connection (kpbs)
+    * the average latency (ms)
+    * the "jitter" of the latency (ms)
+  * code needed three different `TcpConnectionSimulator` instances:
+
+    ```java
+    public class PerformanceTester {
+      public static final TcpConnectionSimulator wifi = new TcpConnectionSimulator(
+        500, /* Kbps */
+        80, /* millisecs latency */
+        0, /* jitter */
+        0 /* packet loss % */);
+
+      public static final TcpConnectionSimulator cell = new TcpConnectionSimulator(
+        100, /* Kbps */
+        400, /* millisecs latency */
+        250, /* jitter */
+        5 /* packet loss % */);
+      )
+    }
+    ```
+
+  * the example needed "extra line breaks" due to fitting inside an 80-character limit
+    * suppose that's your team's coding standard
+  * unfortunately, that made the definition of `t3_fiber` look different than its neighbours
+  * the "silhouette" of this code is odd and it draws attention to `t3_fiber` for n reason
+  * it does NOT follow the principle: **"similar code should look similar."**
+
+how to make the code more consistent?
+
+* introduce extra like breaks
+* line up the comments whilst we're at it
+
+  ```java
+  public class PerformanceTester {
+    public static final TcpConnectionSimulator wifi =
+      new TcpConnectionSimulator(
+        500,    /* Kbps */
+        80,     /* millisecs latency */
+        0,      /* jitter */
+        0       /* packet loss % */);
+
+    public static final TcpConnectionSimulator t3_fiber =
+      new TcpConnectionSimulator(
+        45000,  /* Kbps */
+        10,     /* millisecs latency */
+        0,      /* jitter */
+        0       /* packet loss % */);
+
+    public static final TcpConnectionSimulator cell =
+      new TcpConnectionSimulator(
+        100,    /* Kbps */
+        400,    /* millisecs latency */
+        250,    /* jitter */
+        5       /* packet loss % */);
+  }
+  ```
+
+* better
+  * nice and consistent pattern
+  * easier to scan
+    * BUT
+      * _uses a lot of vertical space_
+      * _duplicates each comment three times_
+      * **more compact way?**
+
+```java
+public class PerformanceTester {
+  // TcpConnectionSimulator(throughput, latency, jitter, packet_loss)
+  //                          [Kbps]    [ms]      [ms]    [percent]
+  public static final TcpConnectionSimulator wifi =
+    new TcpConnectionSimulator(500,     80,       200,    1);
+  public static final TcpConnectionSimulator t3_fiber=
+    new TcpConnectionSimulator(45000,   10,       0,      0);
+  public static final TcpConnectionSimulator cell=
+    new TcpConnectionSimulator(100,     400,      250,    5);
+}
+```
+
+* moved the comment on the top and then put all the parameters on one line
+  * comment isn't right next to each number, but
+  * the "data" is lined up in a more compact table
+
+Personal Note:
+
+> I don't like this and this is not valid with gofmt with Golang because it just put all into very tiny spaces, even if we can save some, it just looks more complex in my opinion and I reckon reasonable amount of duplication is not really bad thing.
 
 ### 4.3. Use Methods to Clean Up Irregularity
 
