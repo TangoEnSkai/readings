@@ -1337,9 +1337,57 @@ public class PerformanceTester {
 
 Personal Note:
 
-> I don't like this and this is not valid with gofmt with Golang because it just put all into very tiny spaces, even if we can save some, it just looks more complex in my opinion and I reckon reasonable amount of duplication is not really bad thing.
+> I don't like this and this is not valid with `gofmt` with Golang because it just put all into very tiny spaces, even if we can save some, it just looks more complex in my opinion and I reckon reasonable amount of duplication is not really bad thing.
 
 ### 4.3. Use Methods to Clean Up Irregularity
+
+* suppose you had a personnel database (DB) with this function:
+
+```cpp
+// Turn a partial_name like "Mark Hahn" into "Mr. Mark Hahn".
+// If not possible, 'error' is filled with an explanation.
+string ExpandFullName(DatabaseConnection dc, string partial_name, string* error);
+```
+
+the function tested with this example:
+
+```cpp
+DatabaseConnection database_connection;
+string error;
+assert(ExpandFullName(database_connection, "Mark Hahn", &error)
+== "Mr. Mark Hahn");
+assert(error == "");
+assert(ExpandFullName(database_connection, " Jake Brown ", &error)
+== "Mr. Jacob Brown III");
+assert(error == "");
+assert(ExpandFullName(database_connection, "No Such Person", &error) == ""); assert(error == "no match found"); assert(ExpandFullName(database_connection, "John", &error) == ""); assert(error == "more than one result");
+```
+
+* the code above:
+  * not aesthetically pleasing
+    * some lines are so long
+    * they wrap to the next line
+    * silhouette of this code is ugly
+    * no consistent pattern
+  * **a lot of repeated string**
+    * `assert(ExpandFullName(database_connection...,"))`
+    * `error`
+  * with a _helper_ method:
+
+    ```cpp
+    CheckFullName("Doug Adams", "Mr. Douglas Adams", "");
+    CheckFullName(" Jake Brown ", "Mr. Jake Brown III", "");
+    CheckFullName("No Such Guy", "", "no match found");
+    CheckFullName("John", "", "more than one result");
+    ```
+
+* the main goal:
+  * aesthetically pleasing code
+* other things we can get from this example:
+  * eliminating a lot of the duplicated code; making the code more compact
+  * important part of each test case (the names and error strings) are now by themselves, in plain sight.
+    * before, we have `database)connection` and `error` it makes hard to "take in" the code in one eyeful
+  * adding new test should be easier
 
 ### 4.4. Use Column Alignment When Helpful
 
