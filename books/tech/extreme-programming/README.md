@@ -1,5 +1,29 @@
 # Extreme Programming Explained (Beck 2004)
 
+- foreword: can apply eXtreme Programming (hereafter XP) below:
+  - testing early, often and automated
+  - incremental design
+  - daily deployement
+  - customer involvement
+  - continuous integration
+  - short development cycles
+  - Incremental planning
+
+- preface
+  - goal of XP: "outstanding software development
+    - lower cose
+    - fewer defects
+    - higher productivity
+    - higher return on investment
+    - by pushing
+      - ordinary development practices
+      - to "eXtreme"
+
+- positive & inclusive way
+  - no matter the circumstance you can always improve
+  - you can always start improving with yourself
+  - you can always start improving today
+
 ---
 
 ## Table of Contents
