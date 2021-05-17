@@ -1,5 +1,22 @@
 # the Agile Sammurai (Rasmusson 2010)
 
+- Agile: a way of developing software that reminds us that although computers run the code, it's people who create and maintain it.
+  - framework
+  - attitude
+  - approach
+  - objective:
+    - lean
+    - fast
+    - pragmatic
+  - note:
+    - there's no silver bullet
+
+main objectives:
+
+- How to successfuly set up and kick-start your own agile project so clearly that there won't be any confusion as to what your project is about and what it stands for.
+- How to gather requirements, estimate, and plan in a clear, open, and honest way.
+- How to execute fiercely. How to turn your agile proejct into a well-oiled machine that continuously produces high-quality, production ready code.
+
 ---
 
 ## Table of Contents
