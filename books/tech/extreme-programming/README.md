@@ -3,7 +3,7 @@
 - foreword: can apply eXtreme Programming (hereafter XP) below:
   - testing early, often and automated
   - incremental design
-  - daily deployement
+  - daily deployment
   - customer involvement
   - continuous integration
   - short development cycles
@@ -11,7 +11,7 @@
 
 - preface
   - goal of XP: "outstanding software development
-    - lower cose
+    - lower cost
     - fewer defects
     - higher productivity
     - higher return on investment
