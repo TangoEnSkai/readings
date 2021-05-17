@@ -18,10 +18,9 @@ Charles Petzold, Microsoft Press
 
 ---
 
-## 1. Best Friends
+## Table of Contents
 
----
-
-## 2. Codes and Combinations
+- [1. Best Friends](1.md)
+- [2. Codes and Combinations](2.md)
 
 ---
